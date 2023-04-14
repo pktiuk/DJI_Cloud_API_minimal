@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login page</title>
+    <style>
+      .button-row {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      button {
+        flex: 1;
+        margin: 0 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>DJI Cloud API test</h1>
+
+    <div class="button-row">
+      <button id="login-button">Login</button>
+      <button id="logout-button">Logout</button>
+      <button id="raport-button">Raport</button>
+    </div>
+    <ul id="logs"></ul>
+    <script>
+      const APP_ID = 130943;
+      const LICENSE =
+        "HdMDWuYVpt05j3pIk+/vqoJlfY+SP6vp7z6XDyzGeM0d+Oy4JavUyYP/VsOw5i0UE07Lt5q9rzk9Jex1+CnPQO7OzBE6XwcNwZ0pDP/LPTjqdSPRezbmRB8z5yNf5QbEhe1YyLh++JzW9mr9BCkXy1v1h2+Uo0S1MSRZcLgLRw0=";
+      const APP_KEY = "36de02838593125bbe9ab32d08813fb";
+      var fieldList = document.getElementById("logs");
+      var log = function (msg) {
+        var li = document.createElement("li");
+        li.innerText = msg;
+        fieldList.appendChild(li);
+      };
+      var reg_calback = function () {
+        log("Callback called🎉, arguments:" + Array.from(arguments));
+      };
+      var loginButton = document.getElementById("login-button");
+      loginButton.addEventListener("click", function () {
+        log("login");
+        var token = window.djiBridge.platformVerifyLicense(
+          APP_ID,
+          APP_KEY,
+          LICENSE
+        );
+        log("platform is verified: " + window.djiBridge.platformIsVerified());
+
+        var register_params = JSON.stringify({
+          host: "tcp://hostnamehere:1883", // mqtt address, example: tcp://xx.xx.xx.xx:xxx
+          connectCallback: "reg_calback", // js interface for connection status callbacks
+          username: "userloginhere",
+          password: "userpasswordhere",
+        });
+        log(
+          "Load Component: thing " +
+            window.djiBridge.platformLoadComponent("thing", register_params) +
+            "\n Stateℹ️: " +
+            window.djiBridge.thingGetConnectState()
+        );
+        log(
+          "Start the connection thingconn: " +
+            window.djiBridge.thingConnect("userloginhere", "userpasswordhere", "reg_calback")
+        );
+
+        log("Thing Connect state: " + window.djiBridge.thingGetConnectState());
+        // log("TODO here I am supposed to ask about login, password, gateway");
+      });
+
+      var logoutButton = document.getElementById("logout-button");
+      logoutButton.addEventListener("click", function () {
+        log(
+          "unregistering: " + window.djiBridge.platformUnloadComponent("thing")
+        );
+      });
+
+      document
+        .getElementById("raport-button")
+        .addEventListener("click", function () {
+          log(
+            "Statusy platformIsComponentLoaded: " +
+              window.djiBridge.platformIsComponentLoaded("thing") +
+              "\nthing state" +
+              window.djiBridge.thingGetConnectState()
+          );
+        });
+
+      log("platform is verified: " + window.djiBridge.platformIsVerified());
+    </script>
+  </body>
+</html>
