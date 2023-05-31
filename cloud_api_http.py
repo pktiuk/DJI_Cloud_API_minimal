@@ -3,7 +3,7 @@ import os
 
 import uvicorn
 from fastapi import FastAPI
-from fastapi.responses import FileResponse
+from fastapi.responses import HTMLResponse
 
 host_addr = os.environ["HOST_ADDR"]
 username = os.environ["USERNAME"]
@@ -14,11 +14,13 @@ app = FastAPI()
 
 @app.get("/login")
 async def pilot_login():
-    response = FileResponse("./couldhtml/login.html")
-    response.body.replace("hostnamehere", host_addr)
-    response.body.replace("userloginhere", username)
-    response.body.replace("userpasswordhere", password)
-    return response
+    file_path = "./couldhtml/login.html"
+    with open(file_path, 'r') as file:
+        file_content = file.read()
+    file_content.replace("hostnamehere", host_addr)
+    file_content.replace("userloginhere", username)
+    file_content.replace("userpasswordhere", password)
+    return HTMLResponse(file_content)
 
 
 if __name__ == "__main__":
