@@ -1,2 +1,2 @@
 FastAPI
-paho
+paho-mqtt >= 2

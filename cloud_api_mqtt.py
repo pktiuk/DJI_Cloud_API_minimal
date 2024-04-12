@@ -4,6 +4,7 @@ import os
 import json
 import pprint
 
+import paho
 import paho.mqtt.client as mqtt
 
 host_addr = os.environ["HOST_ADDR"]
@@ -59,7 +60,7 @@ def on_message(client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
         handle_osd_message(message)
 
 
-client = mqtt.Client(transport="tcp")
+client = mqtt.Client(paho.mqtt.enums.CallbackAPIVersion.VERSION2, transport="tcp")
 client.on_connect = on_connect
 client.on_message = on_message
 
