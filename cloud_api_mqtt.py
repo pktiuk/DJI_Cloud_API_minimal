@@ -4,6 +4,8 @@ import os
 import json
 import pprint
 
+from importlib.metadata import version
+
 import paho
 import paho.mqtt.client as mqtt
 
@@ -59,8 +61,11 @@ def on_message(client: mqtt.Client, userdata, msg: mqtt.MQTTMessage):
     elif msg.topic.endswith("osd") and msg.topic.startswith("thing"):
         handle_osd_message(message)
 
-
-client = mqtt.Client(paho.mqtt.enums.CallbackAPIVersion.VERSION2, transport="tcp")
+PAHO_MAIN_VER = int(version("paho-mqtt").split(".")[0])
+if PAHO_MAIN_VER == 1:
+    client = mqtt.Client(transport="tcp")
+if PAHO_MAIN_VER == 2:
+    client = mqtt.Client(paho.mqtt.enums.CallbackAPIVersion.VERSION2, transport="tcp")
 client.on_connect = on_connect
 client.on_message = on_message
 
